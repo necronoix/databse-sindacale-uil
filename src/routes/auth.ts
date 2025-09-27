@@ -1,8 +1,22 @@
 import { Hono } from 'hono'
 import { sign } from 'hono/jwt'
-import { bcrypt } from 'hono/bcrypt'
 
 const auth = new Hono<{ Bindings: { DB: D1Database; JWT_SECRET: string } }>()
+
+// Simple hash function for demo (use proper bcrypt in production)
+async function simpleHash(password: string): Promise<string> {
+  // In production, use proper bcrypt or similar
+  const encoder = new TextEncoder()
+  const data = encoder.encode(password)
+  const hashBuffer = await crypto.subtle.digest('SHA-256', data)
+  const hashArray = Array.from(new Uint8Array(hashBuffer))
+  return hashArray.map(b => b.toString(16).padStart(2, '0')).join('')
+}
+
+async function comparePassword(password: string, hash: string): Promise<boolean> {
+  const hashed = await simpleHash(password)
+  return hashed === hash
+}
 
 // Login
 auth.post('/login', async (c) => {
@@ -21,7 +35,7 @@ auth.post('/login', async (c) => {
     }
 
     // Verifica password
-    const isValid = await bcrypt.compare(password, user.password_hash)
+    const isValid = await comparePassword(password, user.password_hash)
     if (!isValid) {
       return c.json({ error: 'Credenziali non valide' }, 401)
     }
@@ -64,7 +78,7 @@ auth.post('/register', async (c) => {
 
   try {
     // Hash password
-    const passwordHash = await bcrypt.hash(password)
+    const passwordHash = await simpleHash(password)
 
     // Inserisci nuovo utente
     const result = await c.env.DB.prepare(`
@@ -99,13 +113,13 @@ auth.post('/change-password', async (c) => {
     }
 
     // Verifica password corrente
-    const isValid = await bcrypt.compare(currentPassword, user.password_hash)
+    const isValid = await comparePassword(currentPassword, user.password_hash)
     if (!isValid) {
       return c.json({ error: 'Password corrente non valida' }, 400)
     }
 
     // Hash nuova password
-    const newPasswordHash = await bcrypt.hash(newPassword)
+    const newPasswordHash = await simpleHash(newPassword)
 
     // Aggiorna password
     await c.env.DB.prepare(`

@@ -1,10 +1,10 @@
--- Inserimento utente admin di default
+-- Inserimento utente amministratore di default
 INSERT OR IGNORE INTO users (username, email, password_hash, role, is_active) VALUES 
 ('admin', 'admin@sindacato.it', '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'admin', 1);
 
--- Inserimento nuovo utente Tiziana con password in chiaro
+-- Inserimento nuovo utente Tiziana
 INSERT OR IGNORE INTO users (username, email, password_hash, role, is_active) VALUES 
-('Tiziana', 'tiziana@sindacato.it', 'pupo', 'admin', 1);
+('Tiziana', 'tiziana@sindacato.it', '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'admin', 1);
 
 -- Inserimento dati di test
 INSERT OR IGNORE INTO iscritti (

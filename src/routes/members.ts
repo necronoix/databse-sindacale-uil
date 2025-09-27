@@ -25,8 +25,8 @@ members.get('/', authMiddleware, async (c) => {
   const ruolo = c.req.query('ruolo')
 
   try {
-    let query = 'SELECT * FROM members WHERE is_active = 1'
-    let countQuery = 'SELECT COUNT(*) as total FROM members WHERE is_active = 1'
+    let query = 'SELECT * FROM iscritti WHERE 1=1'
+    let countQuery = 'SELECT COUNT(*) as total FROM iscritti WHERE 1=1'
     const params: any[] = []
 
     // Aggiungi filtri
