@@ -42,7 +42,7 @@ app.get('/', (c) => {
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Sindacato Roma e Lazio - Gestione Iscritti</title>
+        <title>UIL Scuola Roma e Lazio - Gestione Iscritti</title>
         <script src="https://cdn.tailwindcss.com"></script>
         <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet">
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -52,35 +52,58 @@ app.get('/', (c) => {
     <body class="bg-gray-50">
         <div id="app">
             <!-- Login Container -->
-            <div id="loginContainer" class="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+            <div id="loginContainer" class="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
                 <div class="max-w-md w-full space-y-8">
-                    <div>
-                        <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900">
-                            <i class="fas fa-users mr-3"></i>Sindacato Roma e Lazio
+                    <div class="text-center">
+                        <div class="flex justify-center mb-6">
+                            <div class="bg-white p-4 rounded-2xl shadow-2xl">
+                                <img src="/static/uilscuola-logo.png" alt="UIL Scuola Roma e Lazio" class="h-16 w-auto">
+                            </div>
+                        </div>
+                        <h2 class="text-center text-3xl font-extrabold text-white mb-2">
+                            UIL Scuola Roma e Lazio
                         </h2>
-                        <p class="mt-2 text-center text-sm text-gray-600">
-                            Accedi alla gestione iscritti
+                        <p class="text-center text-lg text-gray-100 mb-2">
+                            Sistema Gestione Iscritti
+                        </p>
+                        <p class="text-center text-sm text-gray-200 opacity-90">
+                            Accedi con le tue credenziali per continuare
                         </p>
                     </div>
                     <form id="loginForm" class="mt-8 space-y-6">
-                        <div class="rounded-md shadow-sm -space-y-px">
+                        <div class="space-y-4">
                             <div>
-                                <input id="username" name="username" type="text" required 
-                                       class="relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm" 
-                                       placeholder="Username">
+                                <label for="username" class="sr-only">Username</label>
+                                <div class="relative">
+                                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                        <i class="fas fa-user text-gray-400"></i>
+                                    </div>
+                                    <input id="username" name="username" type="text" required 
+                                           class="block w-full pl-10 pr-3 py-3 border border-transparent placeholder-gray-400 text-gray-900 rounded-xl bg-white bg-opacity-90 backdrop-blur focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent focus:bg-opacity-100 transition-all duration-200 shadow-lg" 
+                                           placeholder="Nome utente">
+                                </div>
                             </div>
                             <div>
-                                <input id="password" name="password" type="password" required 
-                                       class="relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm" 
-                                       placeholder="Password">
+                                <label for="password" class="sr-only">Password</label>
+                                <div class="relative">
+                                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                        <i class="fas fa-lock text-gray-400"></i>
+                                    </div>
+                                    <input id="password" name="password" type="password" required 
+                                           class="block w-full pl-10 pr-3 py-3 border border-transparent placeholder-gray-400 text-gray-900 rounded-xl bg-white bg-opacity-90 backdrop-blur focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent focus:bg-opacity-100 transition-all duration-200 shadow-lg" 
+                                           placeholder="Password">
+                                </div>
                             </div>
                         </div>
                         <div>
-                            <button type="submit" class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                                Accedi
+                            <button type="submit" class="group relative w-full flex justify-center py-3 px-4 text-sm font-semibold rounded-xl text-white bg-white bg-opacity-20 hover:bg-opacity-30 focus:outline-none focus:ring-2 focus:ring-white focus:ring-opacity-50 backdrop-blur border border-white border-opacity-20 transition-all duration-200 shadow-xl hover:shadow-2xl">
+                                <span class="absolute left-0 inset-y-0 flex items-center pl-3">
+                                    <i class="fas fa-sign-in-alt text-white group-hover:text-gray-100"></i>
+                                </span>
+                                Accedi al Sistema
                             </button>
                         </div>
-                        <div id="loginError" class="hidden text-red-600 text-sm text-center"></div>
+                        <div id="loginError" class="hidden bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg text-sm text-center"></div>
                     </form>
                 </div>
             </div>
@@ -91,9 +114,9 @@ app.get('/', (c) => {
                     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                         <div class="flex justify-between h-16">
                             <div class="flex items-center">
+                                <img src="/static/uilscuola-logo.png" alt="UIL Scuola" class="h-10 w-auto mr-3">
                                 <h1 class="text-xl font-semibold text-gray-900">
-                                    <i class="fas fa-users mr-2"></i>
-                                    Sindacato Roma e Lazio
+                                    UIL Scuola Roma e Lazio
                                 </h1>
                             </div>
                             <div class="flex items-center space-x-4">

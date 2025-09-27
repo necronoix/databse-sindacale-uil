@@ -1,7 +1,7 @@
-# Sistema Gestione Anagrafica - Sindacato Roma e Lazio
+# UIL Scuola Roma e Lazio - Sistema Gestione Iscritti
 
 ## Descrizione
-Sistema completo per la gestione dell'anagrafica degli iscritti alla sezione di Roma e del Lazio di un sindacato. L'applicazione include autenticazione utenti, gestione anagrafica con oltre 20 campi, dashboard stile Tableau/Salesforce con grafici interattivi e reportistica avanzata.
+Sistema completo per la gestione dell'anagrafica degli iscritti alla UIL Scuola di Roma e del Lazio. L'applicazione include autenticazione utenti, gestione anagrafica con oltre 20 campi, dashboard stile Tableau/Salesforce con grafici interattivi e reportistica avanzata.
 
 ## 📊 STATO ATTUALE DEL PROGETTO - SETTEMBRE 2025
 
