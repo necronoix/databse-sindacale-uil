@@ -129,122 +129,181 @@ app.get('/', (c) => {
                     <div class="space-y-6">
                         <!-- Dashboard Tab -->
                         <div id="dashboardTab" class="tab-content">
-                            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-                                <div class="bg-white overflow-hidden shadow rounded-lg">
-                                    <div class="p-5">
+                            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                                <!-- Card Totale Iscritti -->
+                                <div class="bg-gradient-to-br from-indigo-50 to-indigo-100 overflow-hidden shadow-lg rounded-xl border border-indigo-200 hover:shadow-xl transition-all duration-300">
+                                    <div class="p-6">
                                         <div class="flex items-center">
                                             <div class="flex-shrink-0">
-                                                <i class="fas fa-users text-indigo-600 text-2xl"></i>
+                                                <div class="w-12 h-12 bg-gradient-to-br from-indigo-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg">
+                                                    <i class="fas fa-users text-white text-xl"></i>
+                                                </div>
                                             </div>
-                                            <div class="ml-5 w-0 flex-1">
-                                                <dl>
-                                                    <dt class="text-sm font-medium text-gray-500 truncate">Totale Iscritti</dt>
-                                                    <dd id="totalIscritti" class="text-lg font-medium text-gray-900">-</dd>
-                                                </dl>
+                                            <div class="ml-4 flex-1">
+                                                <dt class="text-sm font-medium text-indigo-700 truncate">Totale Iscritti</dt>
+                                                <dd id="totalIscritti" class="text-2xl font-bold text-indigo-900 mt-1">-</dd>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="bg-white overflow-hidden shadow rounded-lg">
-                                    <div class="p-5">
+                                
+                                <!-- Card Docenti -->
+                                <div class="bg-gradient-to-br from-green-50 to-green-100 overflow-hidden shadow-lg rounded-xl border border-green-200 hover:shadow-xl transition-all duration-300">
+                                    <div class="p-6">
                                         <div class="flex items-center">
                                             <div class="flex-shrink-0">
-                                                <i class="fas fa-chalkboard-teacher text-green-600 text-2xl"></i>
+                                                <div class="w-12 h-12 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center shadow-lg">
+                                                    <i class="fas fa-chalkboard-teacher text-white text-xl"></i>
+                                                </div>
                                             </div>
-                                            <div class="ml-5 w-0 flex-1">
-                                                <dl>
-                                                    <dt class="text-sm font-medium text-gray-500 truncate">Docenti</dt>
-                                                    <dd id="totalDocenti" class="text-lg font-medium text-gray-900">-</dd>
-                                                </dl>
+                                            <div class="ml-4 flex-1">
+                                                <dt class="text-sm font-medium text-green-700 truncate">Docenti</dt>
+                                                <dd id="totalDocenti" class="text-2xl font-bold text-green-900 mt-1">-</dd>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="bg-white overflow-hidden shadow rounded-lg">
-                                    <div class="p-5">
+                                
+                                <!-- Card ATA -->
+                                <div class="bg-gradient-to-br from-blue-50 to-blue-100 overflow-hidden shadow-lg rounded-xl border border-blue-200 hover:shadow-xl transition-all duration-300">
+                                    <div class="p-6">
                                         <div class="flex items-center">
                                             <div class="flex-shrink-0">
-                                                <i class="fas fa-tools text-blue-600 text-2xl"></i>
+                                                <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center shadow-lg">
+                                                    <i class="fas fa-tools text-white text-xl"></i>
+                                                </div>
                                             </div>
-                                            <div class="ml-5 w-0 flex-1">
-                                                <dl>
-                                                    <dt class="text-sm font-medium text-gray-500 truncate">ATA</dt>
-                                                    <dd id="totalATA" class="text-lg font-medium text-gray-900">-</dd>
-                                                </dl>
+                                            <div class="ml-4 flex-1">
+                                                <dt class="text-sm font-medium text-blue-700 truncate">ATA</dt>
+                                                <dd id="totalATA" class="text-2xl font-bold text-blue-900 mt-1">-</dd>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="bg-white overflow-hidden shadow rounded-lg">
-                                    <div class="p-5">
+                                
+                                <!-- Card Dirigenti -->
+                                <div class="bg-gradient-to-br from-purple-50 to-purple-100 overflow-hidden shadow-lg rounded-xl border border-purple-200 hover:shadow-xl transition-all duration-300">
+                                    <div class="p-6">
                                         <div class="flex items-center">
                                             <div class="flex-shrink-0">
-                                                <i class="fas fa-user-tie text-purple-600 text-2xl"></i>
+                                                <div class="w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
+                                                    <i class="fas fa-user-tie text-white text-xl"></i>
+                                                </div>
                                             </div>
-                                            <div class="ml-5 w-0 flex-1">
-                                                <dl>
-                                                    <dt class="text-sm font-medium text-gray-500 truncate">Dirigenti</dt>
-                                                    <dd id="totalDirigenti" class="text-lg font-medium text-gray-900">-</dd>
-                                                </dl>
+                                            <div class="ml-4 flex-1">
+                                                <dt class="text-sm font-medium text-purple-700 truncate">Dirigenti</dt>
+                                                <dd id="totalDirigenti" class="text-2xl font-bold text-purple-900 mt-1">-</dd>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                             
-                            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                                <div class="bg-white p-6 rounded-lg shadow">
-                                    <h3 class="text-lg font-medium mb-4">Distribuzione per Ruolo</h3>
-                                    <canvas id="ruoloChart" width="400" height="200"></canvas>
+                            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                                <!-- Grafico Distribuzione Ruoli -->
+                                <div class="bg-white p-6 rounded-2xl shadow-lg border border-gray-100 hover:shadow-xl transition-shadow duration-300">
+                                    <div class="flex items-center mb-6">
+                                        <div class="w-8 h-8 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center mr-3">
+                                            <i class="fas fa-chart-pie text-white text-sm"></i>
+                                        </div>
+                                        <h3 class="text-lg font-semibold text-gray-900">Distribuzione per Ruolo</h3>
+                                    </div>
+                                    <div class="h-64 flex items-center justify-center">
+                                        <canvas id="ruoloChart" width="400" height="250"></canvas>
+                                    </div>
                                 </div>
-                                <div class="bg-white p-6 rounded-lg shadow">
-                                    <h3 class="text-lg font-medium mb-4">Ultimi Iscritti</h3>
-                                    <div id="ultimiIscritti"></div>
+                                
+                                <!-- Ultimi Iscritti -->
+                                <div class="bg-white p-6 rounded-2xl shadow-lg border border-gray-100 hover:shadow-xl transition-shadow duration-300">
+                                    <div class="flex items-center mb-6">
+                                        <div class="w-8 h-8 bg-gradient-to-r from-green-500 to-blue-500 rounded-lg flex items-center justify-center mr-3">
+                                            <i class="fas fa-user-clock text-white text-sm"></i>
+                                        </div>
+                                        <h3 class="text-lg font-semibold text-gray-900">Ultimi Iscritti</h3>
+                                    </div>
+                                    <div id="ultimiIscritti" class="space-y-3 max-h-64 overflow-y-auto"></div>
                                 </div>
                             </div>
                         </div>
 
                         <!-- Anagrafica Tab -->
                         <div id="anagraficaTab" class="tab-content hidden">
-                            <div class="bg-white shadow rounded-lg">
-                                <div class="px-4 py-5 sm:p-6">
-                                    <div class="flex justify-between items-center mb-4">
-                                        <h3 class="text-lg font-medium">Gestione Iscritti</h3>
-                                        <button id="addIscrittoBtn" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md text-sm font-medium">
-                                            <i class="fas fa-plus mr-1"></i>Aggiungi Iscritto
+                            <div class="bg-white shadow-lg rounded-2xl border border-gray-100">
+                                <div class="px-6 py-6">
+                                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 space-y-4 sm:space-y-0">
+                                        <div class="flex items-center">
+                                            <div class="w-10 h-10 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center mr-4">
+                                                <i class="fas fa-users text-white"></i>
+                                            </div>
+                                            <div>
+                                                <h3 class="text-xl font-semibold text-gray-900">Gestione Iscritti</h3>
+                                                <p class="text-sm text-gray-600 mt-1">Visualizza e gestisci tutti gli iscritti al sindacato</p>
+                                            </div>
+                                        </div>
+                                        <button id="addIscrittoBtn" class="inline-flex items-center px-6 py-3 text-sm font-medium text-white bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 rounded-xl transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-300 shadow-lg hover:shadow-xl">
+                                            <i class="fas fa-plus mr-2"></i>Aggiungi Iscritto
                                         </button>
                                     </div>
-                                    <div id="iscrittiTable"></div>
-                                    <div id="pagination" class="mt-4 flex justify-center"></div>
+                                    <div id="iscrittiTable" class="overflow-hidden rounded-xl border border-gray-200"></div>
+                                    <div id="pagination" class="mt-6 flex justify-center"></div>
                                 </div>
                             </div>
                         </div>
 
                         <!-- Ricerca Tab -->
                         <div id="ricercaTab" class="tab-content hidden">
-                            <div class="bg-white shadow rounded-lg">
-                                <div class="px-4 py-5 sm:p-6">
-                                    <h3 class="text-lg font-medium mb-4">Ricerca Avanzata</h3>
-                                    <form id="searchForm" class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-                                        <input type="text" name="cognome" placeholder="Cognome" class="border rounded px-3 py-2">
-                                        <input type="text" name="nome" placeholder="Nome" class="border rounded px-3 py-2">
-                                        <select name="ruolo" class="border rounded px-3 py-2">
-                                            <option value="">Tutti i ruoli</option>
-                                            <option value="Docente">Docente</option>
-                                            <option value="Ata">ATA</option>
-                                            <option value="Dirigente">Dirigente</option>
-                                        </select>
-                                        <input type="text" name="istituto" placeholder="Istituto" class="border rounded px-3 py-2">
-                                        <input type="text" name="localita" placeholder="Località" class="border rounded px-3 py-2">
-                                        <div class="flex space-x-2">
-                                            <button id="searchBtn" type="button" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded text-sm">
-                                                <i class="fas fa-search mr-1"></i>Cerca
-                                            </button>
-                                            <button id="resetSearchBtn" type="button" class="bg-gray-300 hover:bg-gray-400 text-gray-700 px-4 py-2 rounded text-sm">
-                                                <i class="fas fa-undo mr-1"></i>Reset
-                                            </button>
+                            <div class="bg-white shadow-lg rounded-2xl border border-gray-100">
+                                <div class="px-6 py-6">
+                                    <div class="flex items-center mb-6">
+                                        <div class="w-10 h-10 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-xl flex items-center justify-center mr-4">
+                                            <i class="fas fa-search text-white"></i>
                                         </div>
-                                    </form>
+                                        <div>
+                                            <h3 class="text-xl font-semibold text-gray-900">Ricerca Avanzata</h3>
+                                            <p class="text-sm text-gray-600 mt-1">Utilizza i filtri per trovare iscritti specifici</p>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Form di Ricerca -->
+                                    <div class="bg-gray-50 rounded-xl p-6 mb-6">
+                                        <form id="searchForm" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                            <div class="space-y-2">
+                                                <label class="text-sm font-medium text-gray-700">Cognome</label>
+                                                <input type="text" name="cognome" placeholder="Inserisci cognome" class="w-full border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors">
+                                            </div>
+                                            <div class="space-y-2">
+                                                <label class="text-sm font-medium text-gray-700">Nome</label>
+                                                <input type="text" name="nome" placeholder="Inserisci nome" class="w-full border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors">
+                                            </div>
+                                            <div class="space-y-2">
+                                                <label class="text-sm font-medium text-gray-700">Ruolo</label>
+                                                <select name="ruolo" class="w-full border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors">
+                                                    <option value="">Tutti i ruoli</option>
+                                                    <option value="Docente">Docente</option>
+                                                    <option value="Ata">ATA</option>
+                                                    <option value="Dirigente">Dirigente</option>
+                                                </select>
+                                            </div>
+                                            <div class="space-y-2">
+                                                <label class="text-sm font-medium text-gray-700">Istituto</label>
+                                                <input type="text" name="istituto" placeholder="Inserisci istituto" class="w-full border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors">
+                                            </div>
+                                            <div class="space-y-2">
+                                                <label class="text-sm font-medium text-gray-700">Località</label>
+                                                <input type="text" name="localita" placeholder="Inserisci località" class="w-full border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors">
+                                            </div>
+                                            <div class="flex items-end space-x-3">
+                                                <button id="searchBtn" type="button" class="flex-1 bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 shadow-lg hover:shadow-xl">
+                                                    <i class="fas fa-search mr-2"></i>Cerca
+                                                </button>
+                                                <button id="resetSearchBtn" type="button" class="px-4 py-2.5 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-lg text-sm font-medium transition-colors duration-200">
+                                                    <i class="fas fa-undo mr-2"></i>Reset
+                                                </button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                    
+                                    <!-- Risultati Ricerca -->
                                     <div id="searchResults"></div>
                                 </div>
                             </div>
@@ -261,26 +320,51 @@ app.get('/', (c) => {
                 </div>
             </div>
 
-            <!-- Modal per Iscritto -->
-            <div id="iscrittoModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden">
-                <div class="relative top-20 mx-auto p-5 border w-11/12 md:w-3/4 lg:w-1/2 shadow-lg rounded-md bg-white">
-                    <div class="mt-3">
-                        <div class="flex justify-between items-center mb-4">
-                            <h3 id="modalTitle" class="text-lg font-medium">Aggiungi Iscritto</h3>
-                            <button id="closeModal" class="text-gray-400 hover:text-gray-600">
-                                <i class="fas fa-times"></i>
-                            </button>
-                        </div>
-                        <form id="iscrittoForm" class="space-y-4">
-                            <!-- Form fields will be populated by JavaScript -->
-                        </form>
-                        <div class="flex justify-end space-x-2 mt-6">
-                            <button id="cancelIscrittoBtn" type="button" class="bg-gray-300 hover:bg-gray-400 text-gray-700 px-4 py-2 rounded">
-                                Annulla
-                            </button>
-                            <button id="saveIscrittoBtn" type="button" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded">
-                                Salva
-                            </button>
+            <!-- Modal per Iscritto - Design Moderno -->
+            <div id="iscrittoModal" class="fixed inset-0 z-50 overflow-hidden hidden" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+                <!-- Backdrop -->
+                <div class="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm transition-opacity"></div>
+                
+                <!-- Modal Container -->
+                <div class="fixed inset-0 z-50 overflow-y-auto">
+                    <div class="flex min-h-full items-center justify-center p-4">
+                        <!-- Modal Panel -->
+                        <div class="relative w-full max-w-4xl max-h-[90vh] bg-white rounded-2xl shadow-2xl transform transition-all">
+                            <!-- Header -->
+                            <div class="sticky top-0 z-10 bg-white rounded-t-2xl border-b border-gray-100 px-6 py-4">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center space-x-3">
+                                        <div class="flex-shrink-0 w-8 h-8 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center">
+                                            <i class="fas fa-user-plus text-white text-sm"></i>
+                                        </div>
+                                        <h3 id="modalTitle" class="text-xl font-semibold text-gray-900">Aggiungi Iscritto</h3>
+                                    </div>
+                                    <button id="closeModal" class="flex-shrink-0 w-8 h-8 rounded-lg bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-400 hover:text-gray-600 transition-colors">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <!-- Content with Scroll -->
+                            <div class="overflow-y-auto max-h-[calc(90vh-140px)] bg-white">
+                                <div class="px-6 py-4">
+                                    <form id="iscrittoForm">
+                                        <!-- Form fields will be populated by JavaScript -->
+                                    </form>
+                                </div>
+                            </div>
+                            
+                            <!-- Footer -->
+                            <div class="sticky bottom-0 z-10 bg-white rounded-b-2xl border-t border-gray-100 px-6 py-4">
+                                <div class="flex justify-end space-x-3">
+                                    <button id="cancelIscrittoBtn" type="button" class="px-6 py-2.5 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-gray-300">
+                                        <i class="fas fa-times mr-2"></i>Annulla
+                                    </button>
+                                    <button id="saveIscrittoBtn" type="button" class="px-6 py-2.5 text-sm font-medium text-white bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-300 shadow-lg hover:shadow-xl">
+                                        <i class="fas fa-save mr-2"></i>Salva
+                                    </button>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>

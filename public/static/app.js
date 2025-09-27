@@ -278,55 +278,139 @@ function displayIscritti(data) {
     const container = document.getElementById('iscrittiTable');
     
     if (!data.data || data.data.length === 0) {
-        container.innerHTML = '<p class="text-gray-500">Nessun iscritto trovato</p>';
+        container.innerHTML = `
+            <div class="text-center py-12">
+                <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-users text-gray-400 text-2xl"></i>
+                </div>
+                <h3 class="text-lg font-medium text-gray-900 mb-2">Nessun iscritto trovato</h3>
+                <p class="text-gray-500">Non ci sono iscritti che corrispondono ai criteri di ricerca.</p>
+            </div>
+        `;
         return;
     }
     
     const html = `
-        <table class="min-w-full divide-y divide-gray-200">
-            <thead class="bg-gray-50">
-                <tr>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Cognome</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nome</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ruolo</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Istituto</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Contratto</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Azioni</th>
-                </tr>
-            </thead>
-            <tbody class="bg-white divide-y divide-gray-200">
-                ${data.data.map(iscritto => `
-                    <tr>
-                        <td class="px-6 py-4 whitespace-nowrap">${iscritto.cognome || '-'}</td>
-                        <td class="px-6 py-4 whitespace-nowrap">${iscritto.nome || '-'}</td>
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <span class="px-2 py-1 text-xs font-semibold rounded-full ${getRuoloBadgeClass(iscritto.ruolo)}">
-                                ${iscritto.ruolo || '-'}
-                            </span>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${iscritto.istituto || '-'}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">${iscritto.email || '-'}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm">
-                            <span class="px-2 py-1 text-xs font-semibold rounded-full ${getContractBadgeClass(iscritto.tipo_di_contratto)}">
-                                ${iscritto.tipo_di_contratto || '-'}
-                            </span>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <button onclick="editIscritto(${iscritto.id})" class="text-blue-600 hover:text-blue-900 mr-3" title="Modifica">
-                                <i class="fas fa-edit"></i>
-                            </button>
-                            <button onclick="viewIscritto(${iscritto.id})" class="text-green-600 hover:text-green-900 mr-3" title="Visualizza">
-                                <i class="fas fa-eye"></i>
-                            </button>
-                            <button onclick="deleteIscritto(${iscritto.id})" class="text-red-600 hover:text-red-900" title="Elimina">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </td>
+        <div class="bg-white rounded-xl overflow-hidden">
+            <table class="min-w-full">
+                <thead>
+                    <tr class="bg-gradient-to-r from-gray-50 to-gray-100 border-b border-gray-200">
+                        <th class="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">
+                            <div class="flex items-center space-x-1">
+                                <i class="fas fa-user text-gray-400"></i>
+                                <span>Iscritto</span>
+                            </div>
+                        </th>
+                        <th class="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">
+                            <div class="flex items-center space-x-1">
+                                <i class="fas fa-briefcase text-gray-400"></i>
+                                <span>Ruolo</span>
+                            </div>
+                        </th>
+                        <th class="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">
+                            <div class="flex items-center space-x-1">
+                                <i class="fas fa-building text-gray-400"></i>
+                                <span>Istituto</span>
+                            </div>
+                        </th>
+                        <th class="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">
+                            <div class="flex items-center space-x-1">
+                                <i class="fas fa-envelope text-gray-400"></i>
+                                <span>Contatti</span>
+                            </div>
+                        </th>
+                        <th class="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">
+                            <div class="flex items-center space-x-1">
+                                <i class="fas fa-file-contract text-gray-400"></i>
+                                <span>Contratto</span>
+                            </div>
+                        </th>
+                        <th class="px-6 py-4 text-center text-xs font-bold text-gray-600 uppercase tracking-wider">
+                            <i class="fas fa-cog text-gray-400"></i>
+                            <span class="ml-1">Azioni</span>
+                        </th>
                     </tr>
-                `).join('')}
-            </tbody>
-        </table>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-100">
+                    ${data.data.map((iscritto, index) => `
+                        <tr class="hover:bg-gray-50 transition-colors duration-150 ${index % 2 === 0 ? 'bg-white' : 'bg-gray-25'}">
+                            <td class="px-6 py-4">
+                                <div class="flex items-center">
+                                    <div class="flex-shrink-0 w-10 h-10 bg-gradient-to-br from-indigo-100 to-purple-100 rounded-full flex items-center justify-center">
+                                        <span class="text-indigo-700 font-semibold text-sm">
+                                            ${(iscritto.cognome || '').charAt(0)}${(iscritto.nome || '').charAt(0)}
+                                        </span>
+                                    </div>
+                                    <div class="ml-4">
+                                        <div class="text-sm font-semibold text-gray-900">
+                                            ${iscritto.cognome || '-'} ${iscritto.nome || '-'}
+                                        </div>
+                                        <div class="text-xs text-gray-500">
+                                            ID: ${iscritto.id}
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4">
+                                <span class="inline-flex px-3 py-1 text-xs font-semibold rounded-full ${getRuoloBadgeClass(iscritto.ruolo)}">
+                                    <i class="${getRuoloIcon(iscritto.ruolo)} mr-1"></i>
+                                    ${iscritto.ruolo || '-'}
+                                </span>
+                            </td>
+                            <td class="px-6 py-4">
+                                <div class="text-sm text-gray-900 font-medium">
+                                    ${truncateText(iscritto.istituto || '-', 30)}
+                                </div>
+                                <div class="text-xs text-gray-500">
+                                    ${iscritto.localita || '-'}
+                                </div>
+                            </td>
+                            <td class="px-6 py-4">
+                                <div class="space-y-1">
+                                    ${iscritto.email ? `
+                                        <div class="flex items-center text-xs text-gray-600">
+                                            <i class="fas fa-envelope text-gray-400 mr-1"></i>
+                                            ${truncateText(iscritto.email, 25)}
+                                        </div>
+                                    ` : ''}
+                                    ${iscritto.telefono ? `
+                                        <div class="flex items-center text-xs text-gray-600">
+                                            <i class="fas fa-phone text-gray-400 mr-1"></i>
+                                            ${iscritto.telefono}
+                                        </div>
+                                    ` : ''}
+                                </div>
+                            </td>
+                            <td class="px-6 py-4">
+                                <span class="inline-flex px-3 py-1 text-xs font-semibold rounded-full ${getContractBadgeClass(iscritto.tipo_di_contratto)}">
+                                    ${getContractIcon(iscritto.tipo_di_contratto)}
+                                    ${iscritto.tipo_di_contratto || '-'}
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 text-center">
+                                <div class="flex items-center justify-center space-x-2">
+                                    <button onclick="viewIscritto(${iscritto.id})" 
+                                            class="w-8 h-8 rounded-lg bg-green-100 hover:bg-green-200 text-green-600 hover:text-green-700 flex items-center justify-center transition-colors duration-200" 
+                                            title="Visualizza dettagli">
+                                        <i class="fas fa-eye text-sm"></i>
+                                    </button>
+                                    <button onclick="editIscritto(${iscritto.id})" 
+                                            class="w-8 h-8 rounded-lg bg-blue-100 hover:bg-blue-200 text-blue-600 hover:text-blue-700 flex items-center justify-center transition-colors duration-200" 
+                                            title="Modifica">
+                                        <i class="fas fa-edit text-sm"></i>
+                                    </button>
+                                    <button onclick="deleteIscritto(${iscritto.id})" 
+                                            class="w-8 h-8 rounded-lg bg-red-100 hover:bg-red-200 text-red-600 hover:text-red-700 flex items-center justify-center transition-colors duration-200" 
+                                            title="Elimina">
+                                        <i class="fas fa-trash text-sm"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    `).join('')}
+                </tbody>
+            </table>
+        </div>
     `;
     
     container.innerHTML = html;
@@ -338,25 +422,54 @@ function displayIscritti(data) {
 function getRuoloBadgeClass(ruolo) {
     switch (ruolo) {
         case 'Docente':
-            return 'bg-blue-100 text-blue-800';
+            return 'bg-blue-100 text-blue-700 border border-blue-200';
         case 'Ata':
-            return 'bg-green-100 text-green-800';
+            return 'bg-green-100 text-green-700 border border-green-200';
         case 'Dirigente':
-            return 'bg-purple-100 text-purple-800';
+            return 'bg-purple-100 text-purple-700 border border-purple-200';
         default:
-            return 'bg-gray-100 text-gray-800';
+            return 'bg-gray-100 text-gray-700 border border-gray-200';
+    }
+}
+
+function getRuoloIcon(ruolo) {
+    switch (ruolo) {
+        case 'Docente':
+            return 'fas fa-chalkboard-teacher';
+        case 'Ata':
+            return 'fas fa-tools';
+        case 'Dirigente':
+            return 'fas fa-user-tie';
+        default:
+            return 'fas fa-user';
     }
 }
 
 function getContractBadgeClass(contratto) {
     switch (contratto) {
         case 'Tempo Indeterminato':
-            return 'bg-green-100 text-green-800';
+            return 'bg-green-100 text-green-700 border border-green-200';
         case 'Tempo Determinato':
-            return 'bg-yellow-100 text-yellow-800';
+            return 'bg-orange-100 text-orange-700 border border-orange-200';
         default:
-            return 'bg-gray-100 text-gray-800';
+            return 'bg-gray-100 text-gray-700 border border-gray-200';
     }
+}
+
+function getContractIcon(contratto) {
+    switch (contratto) {
+        case 'Tempo Indeterminato':
+            return '<i class="fas fa-check-circle mr-1"></i>';
+        case 'Tempo Determinato':
+            return '<i class="fas fa-clock mr-1"></i>';
+        default:
+            return '<i class="fas fa-file mr-1"></i>';
+    }
+}
+
+function truncateText(text, maxLength) {
+    if (!text || text.length <= maxLength) return text;
+    return text.substring(0, maxLength) + '...';
 }
 
 function displayPagination(data) {
@@ -367,19 +480,82 @@ function displayPagination(data) {
         return;
     }
     
-    let html = '<div class="flex space-x-2">';
+    let html = `
+        <div class="flex items-center justify-between">
+            <div class="flex items-center text-sm text-gray-600">
+                <span>Mostrando <span class="font-semibold">${((data.page - 1) * data.limit) + 1}</span> - <span class="font-semibold">${Math.min(data.page * data.limit, data.total)}</span> di <span class="font-semibold">${data.total}</span> risultati</span>
+            </div>
+            <div class="flex items-center space-x-1">
+    `;
     
-    for (let i = 1; i <= data.totalPages; i++) {
+    // Previous button
+    if (data.page > 1) {
+        html += `
+            <button onclick="loadIscritti(${data.page - 1}, currentFilters)" 
+                    class="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-l-lg hover:bg-gray-50 hover:text-gray-700 transition-colors duration-200">
+                <i class="fas fa-chevron-left mr-1"></i>Precedente
+            </button>
+        `;
+    }
+    
+    // Page numbers
+    const maxVisiblePages = 5;
+    const startPage = Math.max(1, data.page - Math.floor(maxVisiblePages / 2));
+    const endPage = Math.min(data.totalPages, startPage + maxVisiblePages - 1);
+    
+    if (startPage > 1) {
+        html += `
+            <button onclick="loadIscritti(1, currentFilters)" 
+                    class="px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 hover:bg-gray-50 transition-colors duration-200">
+                1
+            </button>
+        `;
+        if (startPage > 2) {
+            html += '<span class="px-3 py-2 text-sm text-gray-500">...</span>';
+        }
+    }
+    
+    for (let i = startPage; i <= endPage; i++) {
         html += `
             <button onclick="loadIscritti(${i}, currentFilters)" 
-                    class="px-3 py-1 rounded ${i === data.page ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}"
+                    class="px-3 py-2 text-sm font-medium transition-colors duration-200 ${
+                        i === data.page 
+                        ? 'bg-gradient-to-r from-indigo-500 to-purple-600 text-white border border-indigo-500 shadow-lg' 
+                        : 'text-gray-700 bg-white border border-gray-300 hover:bg-gray-50'
+                    }"
                     ${i === data.page ? 'disabled' : ''}>
                 ${i}
             </button>
         `;
     }
     
-    html += '</div>';
+    if (endPage < data.totalPages) {
+        if (endPage < data.totalPages - 1) {
+            html += '<span class="px-3 py-2 text-sm text-gray-500">...</span>';
+        }
+        html += `
+            <button onclick="loadIscritti(${data.totalPages}, currentFilters)" 
+                    class="px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 hover:bg-gray-50 transition-colors duration-200">
+                ${data.totalPages}
+            </button>
+        `;
+    }
+    
+    // Next button
+    if (data.page < data.totalPages) {
+        html += `
+            <button onclick="loadIscritti(${data.page + 1}, currentFilters)" 
+                    class="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-r-lg hover:bg-gray-50 hover:text-gray-700 transition-colors duration-200">
+                Successiva<i class="fas fa-chevron-right ml-1"></i>
+            </button>
+        `;
+    }
+    
+    html += `
+            </div>
+        </div>
+    `;
+    
     container.innerHTML = html;
 }
 
@@ -422,102 +598,140 @@ async function loadIscrittoForEdit(id) {
 function populateIscrittoForm(iscritto) {
     const form = document.getElementById('iscrittoForm');
     
-    // Campi allineati con il nuovo schema del database
-    const fields = [
-        // Dati personali
-        { name: 'cognome', label: 'Cognome', type: 'text', required: true, section: 'Dati Personali' },
-        { name: 'nome', label: 'Nome', type: 'text', required: true },
-        { name: 'indirizzo', label: 'Indirizzo', type: 'text' },
-        { name: 'email', label: 'Email', type: 'email' },
-        { name: 'telefono', label: 'Telefono', type: 'text' },
-        
-        // Dati iscrizione
-        { name: 'iscrizione', label: 'Data Iscrizione', type: 'date', section: 'Dati Iscrizione' },
-        { name: 'invio', label: 'Data Invio', type: 'date' },
-        { name: 'prot', label: 'Protocollo', type: 'text' },
-        { name: 'ruolo', label: 'Ruolo', type: 'select', options: ['Docente', 'Ata', 'Dirigente'], required: true },
-        
-        // Dati lavorativi
-        { name: 'istituto', label: 'Istituto', type: 'text', section: 'Dati Lavorativi' },
-        { name: 'tipologia', label: 'Tipologia Istituto', type: 'text' },
-        { name: 'uff_servizio', label: 'Ufficio Servizio', type: 'text' },
-        { name: 'descrizione', label: 'Descrizione Ruolo', type: 'text' },
-        { name: 'cod_mecc', label: 'Codice Meccanografico', type: 'text' },
-        { name: 'indirizzo_ufficio', label: 'Indirizzo Ufficio', type: 'text' },
-        { name: 'cap', label: 'CAP', type: 'text' },
-        { name: 'localita', label: 'Località', type: 'text' },
-        { name: 'qual_liv', label: 'Qualifica/Livello', type: 'text' },
-        
-        // Dati contrattuali
-        { name: 'tipo_di_contratto', label: 'Tipo di Contratto', type: 'select', options: ['Tempo Indeterminato', 'Tempo Determinato'], section: 'Dati Contrattuali' },
-        { name: 'scadenza_contratto', label: 'Scadenza Contratto', type: 'date' },
-        { name: 'tiporit', label: 'Tipo Ritenuta', type: 'text' },
-        { name: 'importoritenuta', label: 'Importo Ritenuta', type: 'number', step: '0.01' },
-        { name: 'meserata', label: 'Mese Rata', type: 'text' },
-        { name: 'annorata', label: 'Anno Rata', type: 'text' },
-        
-        // Dati sindacali
-        { name: 'rsu_tas', label: 'RSU/TAS', type: 'select', options: ['RSU', 'TAS', 'Nessuno'], section: 'Dati Sindacali' },
-        { name: 'riferimento', label: 'Riferimento', type: 'text' },
-        { name: 'attuale', label: 'Stato Attuale', type: 'text' },
-        { name: 'dpt', label: 'Dipartimento', type: 'text' },
-        { name: 'prov_iscrizione', label: 'Provincia Iscrizione', type: 'text' },
-        { name: 'anagrafica', label: 'Note Anagrafica', type: 'text' },
-        
-        // Altri dati
-        { name: 'documento', label: 'Documento', type: 'text', section: 'Altri Dati' },
-        { name: 'note', label: 'Note', type: 'textarea' }
+    // Sezioni organizzate per il form
+    const sections = [
+        {
+            title: 'Dati Personali',
+            icon: 'fas fa-user',
+            color: 'indigo',
+            fields: [
+                { name: 'cognome', label: 'Cognome', type: 'text', required: true },
+                { name: 'nome', label: 'Nome', type: 'text', required: true },
+                { name: 'indirizzo', label: 'Indirizzo Residenza', type: 'text' },
+                { name: 'email', label: 'Email Personale', type: 'email' },
+                { name: 'telefono', label: 'Telefono', type: 'text' },
+                { name: 'documento', label: 'Documento Identità', type: 'text' }
+            ]
+        },
+        {
+            title: 'Dati Iscrizione',
+            icon: 'fas fa-calendar-plus',
+            color: 'green',
+            fields: [
+                { name: 'iscrizione', label: 'Data Iscrizione', type: 'date' },
+                { name: 'invio', label: 'Data Invio Documentazione', type: 'date' },
+                { name: 'prot', label: 'Numero Protocollo', type: 'text' },
+                { name: 'ruolo', label: 'Ruolo', type: 'select', options: ['Docente', 'Ata', 'Dirigente'], required: true },
+                { name: 'prov_iscrizione', label: 'Provincia Iscrizione', type: 'text' },
+                { name: 'anagrafica', label: 'Note Anagrafica', type: 'textarea' }
+            ]
+        },
+        {
+            title: 'Dati Lavorativi',
+            icon: 'fas fa-briefcase',
+            color: 'blue',
+            fields: [
+                { name: 'istituto', label: 'Istituto/Ente', type: 'text' },
+                { name: 'tipologia', label: 'Tipologia Istituto', type: 'text' },
+                { name: 'uff_servizio', label: 'Ufficio di Servizio', type: 'text' },
+                { name: 'descrizione', label: 'Descrizione Mansione', type: 'text' },
+                { name: 'cod_mecc', label: 'Codice Meccanografico', type: 'text' },
+                { name: 'indirizzo_ufficio', label: 'Indirizzo Sede Lavoro', type: 'text' },
+                { name: 'cap', label: 'CAP Sede', type: 'text' },
+                { name: 'localita', label: 'Località Sede', type: 'text' },
+                { name: 'qual_liv', label: 'Qualifica/Livello', type: 'text' }
+            ]
+        },
+        {
+            title: 'Dati Contrattuali',
+            icon: 'fas fa-file-contract',
+            color: 'purple',
+            fields: [
+                { name: 'tipo_di_contratto', label: 'Tipo di Contratto', type: 'select', options: ['Tempo Indeterminato', 'Tempo Determinato'] },
+                { name: 'scadenza_contratto', label: 'Scadenza Contratto', type: 'date' },
+                { name: 'tiporit', label: 'Tipo Ritenuta', type: 'text' },
+                { name: 'importoritenuta', label: 'Importo Ritenuta (€)', type: 'number', step: '0.01' },
+                { name: 'meserata', label: 'Mese Rata', type: 'text' },
+                { name: 'annorata', label: 'Anno Rata', type: 'text' },
+                { name: 'attuale', label: 'Stato Attuale', type: 'text' }
+            ]
+        },
+        {
+            title: 'Dati Sindacali',
+            icon: 'fas fa-users-cog',
+            color: 'orange',
+            fields: [
+                { name: 'rsu_tas', label: 'RSU/TAS', type: 'select', options: ['RSU', 'TAS', 'Nessuno'] },
+                { name: 'riferimento', label: 'Riferimento/Contatto', type: 'text' },
+                { name: 'dpt', label: 'Dipartimento', type: 'text' },
+                { name: 'note', label: 'Note Aggiuntive', type: 'textarea' }
+            ]
+        }
     ];
     
-    let html = '';
-    let currentSection = '';
+    let html = '<div class="space-y-6">';
     
-    fields.forEach(field => {
-        const value = iscritto[field.name] || '';
+    sections.forEach((section, index) => {
+        html += `
+            <div class="bg-gray-50 rounded-xl p-6 border border-gray-200">
+                <div class="flex items-center mb-4">
+                    <div class="w-8 h-8 bg-gradient-to-r from-${section.color}-500 to-${section.color}-600 rounded-lg flex items-center justify-center mr-3">
+                        <i class="${section.icon} text-white text-sm"></i>
+                    </div>
+                    <h4 class="text-lg font-semibold text-gray-900">${section.title}</h4>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        `;
         
-        // Aggiungi header sezione se necessario
-        if (field.section && field.section !== currentSection) {
-            currentSection = field.section;
-            html += `
-                <div class="col-span-2 border-b border-gray-200 pb-2 mb-4">
-                    <h4 class="text-lg font-medium text-gray-900">${currentSection}</h4>
-                </div>
-            `;
-        }
+        section.fields.forEach(field => {
+            const value = iscritto[field.name] || '';
+            const isFullWidth = field.type === 'textarea' || field.name === 'indirizzo' || field.name === 'indirizzo_ufficio' || field.name === 'descrizione';
+            const colSpan = isFullWidth ? 'md:col-span-2' : '';
+            
+            if (field.type === 'select') {
+                html += `
+                    <div class="${colSpan}">
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">${field.label} ${field.required ? '<span class="text-red-500">*</span>' : ''}</label>
+                        <select name="${field.name}" ${field.required ? 'required' : ''} 
+                                class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-${section.color}-500 focus:border-transparent transition-all duration-200 bg-white">
+                            <option value="">Seleziona ${field.label.toLowerCase()}...</option>
+                            ${field.options.map(opt => `<option value="${opt}" ${value === opt ? 'selected' : ''}>${opt}</option>`).join('')}
+                        </select>
+                    </div>
+                `;
+            } else if (field.type === 'textarea') {
+                html += `
+                    <div class="${colSpan}">
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">${field.label}</label>
+                        <textarea name="${field.name}" rows="3" 
+                                 placeholder="Inserisci ${field.label.toLowerCase()}..."
+                                 class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-${section.color}-500 focus:border-transparent transition-all duration-200 resize-none">${value}</textarea>
+                    </div>
+                `;
+            } else {
+                const placeholder = field.type === 'date' ? '' : `Inserisci ${field.label.toLowerCase()}...`;
+                html += `
+                    <div class="${colSpan}">
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">${field.label} ${field.required ? '<span class="text-red-500">*</span>' : ''}</label>
+                        <input type="${field.type}" name="${field.name}" value="${value}" 
+                               ${field.required ? 'required' : ''}
+                               ${field.step ? `step="${field.step}"` : ''}
+                               placeholder="${placeholder}"
+                               class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-${section.color}-500 focus:border-transparent transition-all duration-200">
+                    </div>
+                `;
+            }
+        });
         
-        if (field.type === 'select') {
-            html += `
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">${field.label}</label>
-                    <select name="${field.name}" ${field.required ? 'required' : ''} 
-                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-                        <option value="">Seleziona...</option>
-                        ${field.options.map(opt => `<option value="${opt}" ${value === opt ? 'selected' : ''}>${opt}</option>`).join('')}
-                    </select>
+        html += `
                 </div>
-            `;
-        } else if (field.type === 'textarea') {
-            html += `
-                <div class="col-span-2">
-                    <label class="block text-sm font-medium text-gray-700 mb-1">${field.label}</label>
-                    <textarea name="${field.name}" rows="3" 
-                             class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">${value}</textarea>
-                </div>
-            `;
-        } else {
-            html += `
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">${field.label}</label>
-                    <input type="${field.type}" name="${field.name}" value="${value}" 
-                           ${field.required ? 'required' : ''}
-                           ${field.step ? `step="${field.step}"` : ''}
-                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-                </div>
-            `;
-        }
+            </div>
+        `;
     });
     
-    form.innerHTML = `<div class="grid grid-cols-2 gap-4">${html}</div>`;
+    html += '</div>';
+    
+    form.innerHTML = html;
     form.dataset.iscrittoId = iscritto.id || '';
 }
 
@@ -735,37 +949,148 @@ window.viewIscritto = async function(id) {
         
         const iscritto = response.data;
         
-        // Crea modal di visualizzazione
+        // Crea modal di visualizzazione moderna
         const modalHtml = `
-            <div id="viewModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex items-center justify-center">
-                <div class="relative p-5 border w-11/12 md:w-3/4 lg:w-1/2 shadow-lg rounded-md bg-white max-h-screen overflow-y-auto">
-                    <div class="flex justify-between items-center mb-4">
-                        <h3 class="text-lg font-medium">Dettagli Iscritto</h3>
-                        <button onclick="document.getElementById('viewModal').remove()" class="text-gray-400 hover:text-gray-600">
-                            <i class="fas fa-times"></i>
-                        </button>
-                    </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div><strong>Cognome:</strong> ${iscritto.cognome || '-'}</div>
-                        <div><strong>Nome:</strong> ${iscritto.nome || '-'}</div>
-                        <div><strong>Email:</strong> ${iscritto.email || '-'}</div>
-                        <div><strong>Telefono:</strong> ${iscritto.telefono || '-'}</div>
-                        <div><strong>Ruolo:</strong> ${iscritto.ruolo || '-'}</div>
-                        <div><strong>Istituto:</strong> ${iscritto.istituto || '-'}</div>
-                        <div><strong>Tipologia:</strong> ${iscritto.tipologia || '-'}</div>
-                        <div><strong>Contratto:</strong> ${iscritto.tipo_di_contratto || '-'}</div>
-                        <div><strong>Scadenza:</strong> ${iscritto.scadenza_contratto || '-'}</div>
-                        <div><strong>RSU/TAS:</strong> ${iscritto.rsu_tas || '-'}</div>
-                        <div class="md:col-span-2"><strong>Indirizzo:</strong> ${iscritto.indirizzo || '-'}</div>
-                        <div class="md:col-span-2"><strong>Note:</strong> ${iscritto.note || '-'}</div>
-                    </div>
-                    <div class="flex justify-end mt-6">
-                        <button onclick="document.getElementById('viewModal').remove()" class="bg-gray-300 hover:bg-gray-400 text-gray-700 px-4 py-2 rounded">
-                            Chiudi
-                        </button>
-                        <button onclick="document.getElementById('viewModal').remove(); editIscritto(${id})" class="ml-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded">
-                            Modifica
-                        </button>
+            <div id="viewModal" class="fixed inset-0 z-50 overflow-hidden" role="dialog" aria-modal="true">
+                <div class="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm transition-opacity"></div>
+                <div class="fixed inset-0 z-50 overflow-y-auto">
+                    <div class="flex min-h-full items-center justify-center p-4">
+                        <div class="relative w-full max-w-4xl max-h-[90vh] bg-white rounded-2xl shadow-2xl">
+                            <!-- Header -->
+                            <div class="sticky top-0 bg-white rounded-t-2xl border-b border-gray-100 px-6 py-4">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center space-x-3">
+                                        <div class="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center">
+                                            <span class="text-white font-bold text-lg">
+                                                ${(iscritto.cognome || '').charAt(0)}${(iscritto.nome || '').charAt(0)}
+                                            </span>
+                                        </div>
+                                        <div>
+                                            <h3 class="text-xl font-semibold text-gray-900">${iscritto.cognome} ${iscritto.nome}</h3>
+                                            <p class="text-sm text-gray-600">${iscritto.ruolo || 'Ruolo non specificato'}</p>
+                                        </div>
+                                    </div>
+                                    <button onclick="document.getElementById('viewModal').remove()" class="w-8 h-8 rounded-lg bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-400 hover:text-gray-600 transition-colors">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <!-- Content -->
+                            <div class="overflow-y-auto max-h-[calc(90vh-140px)] p-6">
+                                <div class="space-y-6">
+                                    <!-- Dati Personali -->
+                                    <div class="bg-indigo-50 rounded-xl p-5 border border-indigo-100">
+                                        <div class="flex items-center mb-4">
+                                            <div class="w-8 h-8 bg-indigo-500 rounded-lg flex items-center justify-center mr-3">
+                                                <i class="fas fa-user text-white text-sm"></i>
+                                            </div>
+                                            <h4 class="text-lg font-semibold text-gray-900">Dati Personali</h4>
+                                        </div>
+                                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                            <div class="space-y-1">
+                                                <span class="text-sm font-medium text-gray-500">Email</span>
+                                                <p class="text-gray-900">${iscritto.email || '-'}</p>
+                                            </div>
+                                            <div class="space-y-1">
+                                                <span class="text-sm font-medium text-gray-500">Telefono</span>
+                                                <p class="text-gray-900">${iscritto.telefono || '-'}</p>
+                                            </div>
+                                            <div class="space-y-1 md:col-span-2">
+                                                <span class="text-sm font-medium text-gray-500">Indirizzo</span>
+                                                <p class="text-gray-900">${iscritto.indirizzo || '-'}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Dati Lavorativi -->
+                                    <div class="bg-blue-50 rounded-xl p-5 border border-blue-100">
+                                        <div class="flex items-center mb-4">
+                                            <div class="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center mr-3">
+                                                <i class="fas fa-briefcase text-white text-sm"></i>
+                                            </div>
+                                            <h4 class="text-lg font-semibold text-gray-900">Dati Lavorativi</h4>
+                                        </div>
+                                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                            <div class="space-y-1">
+                                                <span class="text-sm font-medium text-gray-500">Istituto</span>
+                                                <p class="text-gray-900">${iscritto.istituto || '-'}</p>
+                                            </div>
+                                            <div class="space-y-1">
+                                                <span class="text-sm font-medium text-gray-500">Tipologia</span>
+                                                <p class="text-gray-900">${iscritto.tipologia || '-'}</p>
+                                            </div>
+                                            <div class="space-y-1">
+                                                <span class="text-sm font-medium text-gray-500">Qualifica/Livello</span>
+                                                <p class="text-gray-900">${iscritto.qual_liv || '-'}</p>
+                                            </div>
+                                            <div class="space-y-1">
+                                                <span class="text-sm font-medium text-gray-500">Codice Meccanografico</span>
+                                                <p class="text-gray-900">${iscritto.cod_mecc || '-'}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Dati Contrattuali -->
+                                    <div class="bg-purple-50 rounded-xl p-5 border border-purple-100">
+                                        <div class="flex items-center mb-4">
+                                            <div class="w-8 h-8 bg-purple-500 rounded-lg flex items-center justify-center mr-3">
+                                                <i class="fas fa-file-contract text-white text-sm"></i>
+                                            </div>
+                                            <h4 class="text-lg font-semibold text-gray-900">Dati Contrattuali</h4>
+                                        </div>
+                                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                            <div class="space-y-1">
+                                                <span class="text-sm font-medium text-gray-500">Tipo Contratto</span>
+                                                <div class="flex items-center">
+                                                    <span class="inline-flex px-3 py-1 text-xs font-semibold rounded-full ${getContractBadgeClass(iscritto.tipo_di_contratto)}">
+                                                        ${getContractIcon(iscritto.tipo_di_contratto)}
+                                                        ${iscritto.tipo_di_contratto || '-'}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <div class="space-y-1">
+                                                <span class="text-sm font-medium text-gray-500">Scadenza</span>
+                                                <p class="text-gray-900">${iscritto.scadenza_contratto || '-'}</p>
+                                            </div>
+                                            <div class="space-y-1">
+                                                <span class="text-sm font-medium text-gray-500">Importo Ritenuta</span>
+                                                <p class="text-gray-900">${iscritto.importoritenuta ? '€ ' + iscritto.importoritenuta : '-'}</p>
+                                            </div>
+                                            <div class="space-y-1">
+                                                <span class="text-sm font-medium text-gray-500">RSU/TAS</span>
+                                                <p class="text-gray-900">${iscritto.rsu_tas || '-'}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    ${iscritto.note ? `
+                                        <!-- Note -->
+                                        <div class="bg-gray-50 rounded-xl p-5 border border-gray-200">
+                                            <div class="flex items-center mb-3">
+                                                <div class="w-8 h-8 bg-gray-500 rounded-lg flex items-center justify-center mr-3">
+                                                    <i class="fas fa-sticky-note text-white text-sm"></i>
+                                                </div>
+                                                <h4 class="text-lg font-semibold text-gray-900">Note</h4>
+                                            </div>
+                                            <p class="text-gray-700 whitespace-pre-wrap">${iscritto.note}</p>
+                                        </div>
+                                    ` : ''}
+                                </div>
+                            </div>
+                            
+                            <!-- Footer -->
+                            <div class="sticky bottom-0 bg-white rounded-b-2xl border-t border-gray-100 px-6 py-4">
+                                <div class="flex justify-end space-x-3">
+                                    <button onclick="document.getElementById('viewModal').remove()" class="px-6 py-2.5 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors duration-200">
+                                        <i class="fas fa-times mr-2"></i>Chiudi
+                                    </button>
+                                    <button onclick="document.getElementById('viewModal').remove(); editIscritto(${id})" class="px-6 py-2.5 text-sm font-medium text-white bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl">
+                                        <i class="fas fa-edit mr-2"></i>Modifica
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
