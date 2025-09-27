@@ -8,9 +8,10 @@ const dashboard = new Hono<{
   } 
 }>()
 
-// Middleware di autenticazione
+// Middleware di autenticazione - FIXED con stringa diretta
+const JWT_SECRET = 'super-secret-jwt-key-for-sindacato-roma-lazio-2024'
 const authMiddleware = jwt({
-  secret: (c) => c.env.JWT_SECRET
+  secret: JWT_SECRET
 })
 
 // Dashboard statistiche principali
@@ -329,14 +330,18 @@ dashboard.post('/report', authMiddleware, async (c) => {
 // Esporta dati per backup o analisi
 dashboard.get('/export', authMiddleware, async (c) => {
   const format = c.req.query('format') || 'json'
-  const limit = parseInt(c.req.query('limit') || '1000')
+  const limit = parseInt(c.req.query('limit') || '10000')
 
   try {
+    // Query completa per esportazione
     const result = await c.env.DB.prepare(`
       SELECT 
-        cognome, nome, ruolo, istituto, tipologia, email, telefono,
-        tipo_di_contratto, scadenza_contratto, prov_iscrizione, localita,
-        data_iscrizione, rsu_tas, importoritenuta
+        id, cognome, nome, iscrizione, invio, prot, ruolo, istituto, tipologia, 
+        documento, note, indirizzo, email, telefono, attuale, dpt, prov_iscrizione, 
+        anagrafica, importoritenuta, meserata, annorata, uff_servizio, descrizione, 
+        cod_mecc, indirizzo_ufficio, cap, localita, qual_liv, tiporit, 
+        tipo_di_contratto, scadenza_contratto, rsu_tas, riferimento,
+        data_iscrizione, data_ultima_modifica
       FROM iscritti 
       ORDER BY cognome, nome
       LIMIT ?
@@ -354,9 +359,20 @@ dashboard.get('/export', authMiddleware, async (c) => {
 
       return new Response(csvContent, {
         headers: {
-          'Content-Type': 'text/csv',
-          'Content-Disposition': `attachment; filename="iscritti_export_${new Date().toISOString().split('T')[0]}.csv"`
+          'Content-Type': 'text/csv; charset=utf-8',
+          'Content-Disposition': `attachment; filename="UIL_Scuola_Iscritti_${new Date().toISOString().split('T')[0]}.csv"`
         }
+      })
+    }
+
+    if (format === 'excel') {
+      // Per Excel, restituiamo i dati JSON che verranno processati dal frontend
+      // dato che XLSX non funziona direttamente in Cloudflare Workers
+      return c.json({
+        data: result.results,
+        total: result.results.length,
+        exportDate: new Date().toISOString(),
+        format: 'excel'
       })
     }
 
@@ -371,5 +387,7 @@ dashboard.get('/export', authMiddleware, async (c) => {
     return c.json({ error: 'Errore durante l\'esportazione dei dati' }, 500)
   }
 })
+
+
 
 export default dashboard

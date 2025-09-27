@@ -47,6 +47,7 @@ app.get('/', (c) => {
         <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet">
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/axios@1.6.0/dist/axios.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
         <link href="/static/styles.css" rel="stylesheet">
     </head>
     <body class="bg-gray-50">
@@ -263,9 +264,19 @@ app.get('/', (c) => {
                                                 <p class="text-sm text-gray-600 mt-1">Visualizza e gestisci tutti gli iscritti al sindacato</p>
                                             </div>
                                         </div>
-                                        <button id="addIscrittoBtn" class="inline-flex items-center px-6 py-3 text-sm font-medium text-white bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 rounded-xl transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-300 shadow-lg hover:shadow-xl">
-                                            <i class="fas fa-plus mr-2"></i>Aggiungi Iscritto
-                                        </button>
+                                        <div class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3">
+                                            <div class="flex space-x-2">
+                                                <button id="exportExcelBtn" class="inline-flex items-center px-4 py-2 text-sm font-medium text-green-700 bg-green-50 hover:bg-green-100 border border-green-200 rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-green-300">
+                                                    <i class="fas fa-file-excel mr-2"></i>Excel
+                                                </button>
+                                                <button id="exportCsvBtn" class="inline-flex items-center px-4 py-2 text-sm font-medium text-blue-700 bg-blue-50 hover:bg-blue-100 border border-blue-200 rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-300">
+                                                    <i class="fas fa-file-csv mr-2"></i>CSV
+                                                </button>
+                                            </div>
+                                            <button id="addIscrittoBtn" class="inline-flex items-center px-6 py-3 text-sm font-medium text-white bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 rounded-xl transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-300 shadow-lg hover:shadow-xl">
+                                                <i class="fas fa-plus mr-2"></i>Aggiungi Iscritto
+                                            </button>
+                                        </div>
                                     </div>
                                     <div id="iscrittiTable" class="overflow-hidden rounded-xl border border-gray-200"></div>
                                     <div id="pagination" class="mt-6 flex justify-center"></div>
@@ -334,9 +345,99 @@ app.get('/', (c) => {
 
                         <!-- Report Tab -->
                         <div id="reportTab" class="tab-content hidden">
-                            <div class="bg-white p-6 rounded-lg shadow">
-                                <h3 class="text-lg font-medium mb-4">Report e Statistiche</h3>
-                                <p class="text-gray-600">Sezione in sviluppo...</p>
+                            <div class="bg-white shadow-lg rounded-2xl border border-gray-100">
+                                <div class="px-6 py-6">
+                                    <div class="flex items-center mb-6">
+                                        <div class="w-10 h-10 bg-gradient-to-r from-orange-500 to-red-500 rounded-xl flex items-center justify-center mr-4">
+                                            <i class="fas fa-chart-bar text-white"></i>
+                                        </div>
+                                        <div>
+                                            <h3 class="text-xl font-semibold text-gray-900">Report e Esportazioni</h3>
+                                            <p class="text-sm text-gray-600 mt-1">Esporta e scarica i dati del database in diversi formati</p>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Export Section -->
+                                    <div class="bg-gray-50 rounded-xl p-6 mb-6">
+                                        <h4 class="text-lg font-semibold text-gray-900 mb-4">
+                                            <i class="fas fa-download mr-2 text-indigo-600"></i>
+                                            Esportazione Database
+                                        </h4>
+                                        <p class="text-sm text-gray-600 mb-4">
+                                            Esporta tutti i dati degli iscritti in formato Excel o CSV per analisi offline
+                                        </p>
+                                        
+                                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                            <!-- Excel Export Card -->
+                                            <div class="bg-white border border-green-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+                                                <div class="flex items-center mb-3">
+                                                    <div class="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center mr-3">
+                                                        <i class="fas fa-file-excel text-green-600"></i>
+                                                    </div>
+                                                    <h5 class="font-semibold text-gray-900">Microsoft Excel</h5>
+                                                </div>
+                                                <p class="text-sm text-gray-600 mb-4">
+                                                    Formato .xlsx compatibile con Excel, LibreOffice e Google Sheets
+                                                </p>
+                                                <button id="exportExcelFullBtn" class="w-full bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-200">
+                                                    <i class="fas fa-download mr-2"></i>Scarica Excel
+                                                </button>
+                                            </div>
+                                            
+                                            <!-- CSV Export Card -->
+                                            <div class="bg-white border border-blue-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+                                                <div class="flex items-center mb-3">
+                                                    <div class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center mr-3">
+                                                        <i class="fas fa-file-csv text-blue-600"></i>
+                                                    </div>
+                                                    <h5 class="font-semibold text-gray-900">CSV Delimitato</h5>
+                                                </div>
+                                                <p class="text-sm text-gray-600 mb-4">
+                                                    Formato CSV universale per importazione in qualsiasi sistema
+                                                </p>
+                                                <button id="exportCsvFullBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-200">
+                                                    <i class="fas fa-download mr-2"></i>Scarica CSV
+                                                </button>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Export Progress -->
+                                        <div id="exportProgress" class="hidden mt-4">
+                                            <div class="flex items-center">
+                                                <div class="flex-1 bg-gray-200 rounded-full h-2 mr-3">
+                                                    <div id="exportProgressBar" class="bg-indigo-600 h-2 rounded-full transition-all duration-300" style="width: 0%"></div>
+                                                </div>
+                                                <span id="exportProgressText" class="text-sm text-gray-600">0%</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Statistics Section -->
+                                    <div class="bg-gray-50 rounded-xl p-6">
+                                        <h4 class="text-lg font-semibold text-gray-900 mb-4">
+                                            <i class="fas fa-chart-line mr-2 text-purple-600"></i>
+                                            Statistiche Rapide
+                                        </h4>
+                                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                                            <div class="text-center">
+                                                <div class="text-2xl font-bold text-indigo-600" id="statsTotal">-</div>
+                                                <div class="text-sm text-gray-600">Totale Iscritti</div>
+                                            </div>
+                                            <div class="text-center">
+                                                <div class="text-2xl font-bold text-green-600" id="statsDocenti">-</div>
+                                                <div class="text-sm text-gray-600">Docenti</div>
+                                            </div>
+                                            <div class="text-center">
+                                                <div class="text-2xl font-bold text-blue-600" id="statsATA">-</div>
+                                                <div class="text-sm text-gray-600">ATA</div>
+                                            </div>
+                                            <div class="text-center">
+                                                <div class="text-2xl font-bold text-purple-600" id="statsDirigenti">-</div>
+                                                <div class="text-sm text-gray-600">Dirigenti</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>

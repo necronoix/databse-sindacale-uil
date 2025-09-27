@@ -68,6 +68,12 @@ function setupEventListeners() {
     // Ricerca
     document.getElementById('searchBtn').addEventListener('click', performSearch);
     document.getElementById('resetSearchBtn').addEventListener('click', resetSearch);
+    
+    // Esportazione
+    document.getElementById('exportExcelBtn').addEventListener('click', () => exportData('excel'));
+    document.getElementById('exportCsvBtn').addEventListener('click', () => exportData('csv'));
+    document.getElementById('exportExcelFullBtn').addEventListener('click', () => exportData('excel'));
+    document.getElementById('exportCsvFullBtn').addEventListener('click', () => exportData('csv'));
 }
 
 // Gestione autenticazione
@@ -145,7 +151,7 @@ function switchTab(tabName) {
             // La ricerca è gestita dai pulsanti
             break;
         case 'report':
-            loadReportCharts();
+            loadReportStats();
             break;
     }
 }
@@ -1106,3 +1112,333 @@ window.viewIscritto = async function(id) {
 
 window.deleteIscritto = deleteIscritto;
 window.loadIscritti = loadIscritti; // per la paginazione
+
+// === FUNZIONI DI ESPORTAZIONE ===
+
+/**
+ * Esporta i dati in formato Excel o CSV
+ * @param {string} format - 'excel' o 'csv'
+ */
+async function exportData(format) {
+    try {
+        // Mostra indicatore di caricamento
+        showExportProgress(true);
+        updateExportProgress(0, 'Preparazione esportazione...');
+        
+        // Chiamata API per ottenere tutti i dati
+        updateExportProgress(20, 'Recupero dati dal server...');
+        const response = await axios.get('/api/dashboard/export', {
+            params: { format: format, limit: 10000 },
+            headers: { 'Authorization': `Bearer ${authToken}` }
+        });
+        
+        updateExportProgress(50, 'Elaborazione dati...');
+        
+        if (format === 'excel') {
+            await exportToExcel(response.data.data);
+        } else if (format === 'csv') {
+            await exportToCsv(response.data.data);
+        }
+        
+        updateExportProgress(100, 'Esportazione completata!');
+        setTimeout(() => showExportProgress(false), 1500);
+        
+        showNotification(`Dati esportati con successo in formato ${format.toUpperCase()}!`, 'success');
+        
+    } catch (error) {
+        console.error('Errore durante l\'esportazione:', error);
+        showExportProgress(false);
+        showNotification(`Errore durante l'esportazione: ${error.message}`, 'error');
+    }
+}
+
+/**
+ * Esporta i dati in formato Excel (.xlsx)
+ * @param {Array} data - Array di oggetti con i dati degli iscritti
+ */
+async function exportToExcel(data) {
+    try {
+        // Verifica che XLSX sia disponibile
+        if (typeof XLSX === 'undefined') {
+            throw new Error('Libreria XLSX non disponibile');
+        }
+        
+        updateExportProgress(60, 'Creazione file Excel...');
+        
+        // Prepara i dati con intestazioni in italiano
+        const headers = {
+            id: 'ID',
+            cognome: 'Cognome',
+            nome: 'Nome', 
+            iscrizione: 'Iscrizione',
+            invio: 'Invio',
+            prot: 'Protocollo',
+            ruolo: 'Ruolo',
+            istituto: 'Istituto',
+            tipologia: 'Tipologia',
+            documento: 'Documento',
+            note: 'Note',
+            indirizzo: 'Indirizzo',
+            email: 'Email',
+            telefono: 'Telefono',
+            attuale: 'Attuale',
+            dpt: 'Dpt',
+            prov_iscrizione: 'Provincia Iscrizione',
+            anagrafica: 'Anagrafica',
+            importoritenuta: 'Importo Ritenuta',
+            meserata: 'Mese Rata',
+            annorata: 'Anno Rata',
+            uff_servizio: 'Ufficio Servizio',
+            descrizione: 'Descrizione',
+            cod_mecc: 'Codice Meccanografico',
+            indirizzo_ufficio: 'Indirizzo Ufficio',
+            cap: 'CAP',
+            localita: 'Località',
+            qual_liv: 'Qualifica/Livello',
+            tiporit: 'Tipo Ritenuta',
+            tipo_di_contratto: 'Tipo Contratto',
+            scadenza_contratto: 'Scadenza Contratto',
+            rsu_tas: 'RSU/TAS',
+            riferimento: 'Riferimento',
+            data_iscrizione: 'Data Iscrizione',
+            data_ultima_modifica: 'Data Ultima Modifica'
+        };
+        
+        // Converte i dati usando le intestazioni
+        const worksheetData = [];
+        
+        // Aggiunge le intestazioni come prima riga
+        worksheetData.push(Object.values(headers));
+        
+        // Aggiunge i dati
+        data.forEach(row => {
+            const mappedRow = Object.keys(headers).map(key => {
+                let value = row[key];
+                
+                // Formattazione speciale per alcuni campi
+                if (key === 'data_iscrizione' || key === 'data_ultima_modifica') {
+                    if (value) {
+                        const date = new Date(value);
+                        value = date.toLocaleDateString('it-IT');
+                    }
+                }
+                
+                // Gestione valori null/undefined
+                return value || '';
+            });
+            worksheetData.push(mappedRow);
+        });
+        
+        updateExportProgress(80, 'Generazione file...');
+        
+        // Crea il workbook
+        const workbook = XLSX.utils.book_new();
+        const worksheet = XLSX.utils.aoa_to_sheet(worksheetData);
+        
+        // Imposta la larghezza delle colonne
+        const columnWidths = [
+            { wch: 5 },   // ID
+            { wch: 15 },  // Cognome
+            { wch: 15 },  // Nome
+            { wch: 12 },  // Iscrizione
+            { wch: 10 },  // Invio
+            { wch: 12 },  // Protocollo
+            { wch: 10 },  // Ruolo
+            { wch: 30 },  // Istituto
+            { wch: 15 },  // Tipologia
+            { wch: 15 },  // Documento
+            { wch: 20 },  // Note
+            { wch: 30 },  // Indirizzo
+            { wch: 25 },  // Email
+            { wch: 15 },  // Telefono
+            { wch: 12 },  // Attuale
+            { wch: 10 },  // Dpt
+            { wch: 15 },  // Provincia
+            { wch: 15 },  // Anagrafica
+            { wch: 12 },  // Importo Ritenuta
+            { wch: 10 },  // Mese Rata
+            { wch: 10 },  // Anno Rata
+            { wch: 20 },  // Ufficio Servizio
+            { wch: 20 },  // Descrizione
+            { wch: 15 },  // Codice Meccanografico
+            { wch: 30 },  // Indirizzo Ufficio
+            { wch: 8 },   // CAP
+            { wch: 20 },  // Località
+            { wch: 15 },  // Qualifica/Livello
+            { wch: 12 },  // Tipo Ritenuta
+            { wch: 15 },  // Tipo Contratto
+            { wch: 15 },  // Scadenza Contratto
+            { wch: 10 },  // RSU/TAS
+            { wch: 15 },  // Riferimento
+            { wch: 12 },  // Data Iscrizione
+            { wch: 15 }   // Data Ultima Modifica
+        ];
+        
+        worksheet['!cols'] = columnWidths;
+        
+        // Aggiunge il worksheet al workbook
+        XLSX.utils.book_append_sheet(workbook, worksheet, 'Iscritti UIL Scuola');
+        
+        updateExportProgress(90, 'Download in corso...');
+        
+        // Genera il nome del file
+        const today = new Date();
+        const dateString = today.toISOString().split('T')[0]; // YYYY-MM-DD
+        const filename = `UIL_Scuola_Roma_Lazio_Iscritti_${dateString}.xlsx`;
+        
+        // Scarica il file
+        XLSX.writeFile(workbook, filename);
+        
+        updateExportProgress(100, 'Completato!');
+        
+    } catch (error) {
+        console.error('Errore durante l\'esportazione Excel:', error);
+        throw error;
+    }
+}
+
+/**
+ * Esporta i dati in formato CSV
+ * @param {Array} data - Array di oggetti con i dati degli iscritti
+ */
+async function exportToCsv(data) {
+    try {
+        updateExportProgress(60, 'Creazione file CSV...');
+        
+        if (!data || data.length === 0) {
+            throw new Error('Nessun dato da esportare');
+        }
+        
+        // Prepara le intestazioni
+        const headers = Object.keys(data[0]);
+        const csvContent = [];
+        
+        // Aggiunge le intestazioni
+        csvContent.push(headers.join(','));
+        
+        // Aggiunge i dati
+        data.forEach(row => {
+            const values = headers.map(header => {
+                let value = row[header];
+                
+                // Gestisce i valori null/undefined
+                if (value === null || value === undefined) {
+                    value = '';
+                }
+                
+                // Converte a stringa e gestisce le virgole
+                value = String(value);
+                
+                // Se il valore contiene virgole, virgolette o newline, lo racchiude tra virgolette
+                if (value.includes(',') || value.includes('"') || value.includes('\n')) {
+                    // Escapa le virgolette doppie
+                    value = value.replace(/"/g, '""');
+                    value = `"${value}"`;
+                }
+                
+                return value;
+            });
+            
+            csvContent.push(values.join(','));
+        });
+        
+        updateExportProgress(80, 'Generazione file...');
+        
+        // Crea il contenuto CSV
+        const csvString = csvContent.join('\n');
+        
+        updateExportProgress(90, 'Download in corso...');
+        
+        // Crea il blob con BOM per supportare i caratteri UTF-8
+        const BOM = '\uFEFF';
+        const blob = new Blob([BOM + csvString], { 
+            type: 'text/csv;charset=utf-8;' 
+        });
+        
+        // Crea il link per il download
+        const link = document.createElement('a');
+        const url = URL.createObjectURL(blob);
+        
+        const today = new Date();
+        const dateString = today.toISOString().split('T')[0]; // YYYY-MM-DD
+        const filename = `UIL_Scuola_Roma_Lazio_Iscritti_${dateString}.csv`;
+        
+        link.setAttribute('href', url);
+        link.setAttribute('download', filename);
+        link.style.visibility = 'hidden';
+        
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        
+        // Pulisce l'URL
+        URL.revokeObjectURL(url);
+        
+        updateExportProgress(100, 'Completato!');
+        
+    } catch (error) {
+        console.error('Errore durante l\'esportazione CSV:', error);
+        throw error;
+    }
+}
+
+/**
+ * Mostra/nasconde la barra di progresso dell'esportazione
+ * @param {boolean} show - True per mostrare, false per nascondere
+ */
+function showExportProgress(show) {
+    const progressElement = document.getElementById('exportProgress');
+    if (progressElement) {
+        if (show) {
+            progressElement.classList.remove('hidden');
+        } else {
+            progressElement.classList.add('hidden');
+        }
+    }
+}
+
+/**
+ * Aggiorna la barra di progresso dell'esportazione
+ * @param {number} percentage - Percentuale di completamento (0-100)
+ * @param {string} text - Testo descrittivo
+ */
+function updateExportProgress(percentage, text) {
+    const progressBar = document.getElementById('exportProgressBar');
+    const progressText = document.getElementById('exportProgressText');
+    
+    if (progressBar) {
+        progressBar.style.width = percentage + '%';
+    }
+    
+    if (progressText) {
+        progressText.textContent = text || `${percentage}%`;
+    }
+}
+
+/**
+ * Carica le statistiche per il tab Report
+ */
+async function loadReportStats() {
+    try {
+        const response = await axios.get('/api/dashboard/stats', {
+            headers: { 'Authorization': `Bearer ${authToken}` }
+        });
+        
+        const data = response.data;
+        
+        // Aggiorna le statistiche
+        document.getElementById('statsTotal').textContent = data.totalIscritti || 0;
+        document.getElementById('statsDocenti').textContent = data.iscrittiPerRuolo?.Docente || 0;
+        document.getElementById('statsATA').textContent = data.iscrittiPerRuolo?.Ata || 0;
+        document.getElementById('statsDirigenti').textContent = data.iscrittiPerRuolo?.Dirigente || 0;
+        
+    } catch (error) {
+        console.error('Errore caricamento statistiche report:', error);
+    }
+}
+
+// Esporta le funzioni per l'uso globale
+window.exportData = exportData;
+window.exportToExcel = exportToExcel;  
+window.exportToCsv = exportToCsv;
+window.loadReportStats = loadReportStats;

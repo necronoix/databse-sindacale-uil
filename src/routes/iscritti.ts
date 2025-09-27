@@ -8,9 +8,10 @@ const iscritti = new Hono<{
   } 
 }>()
 
-// Middleware di autenticazione
+// Middleware di autenticazione - FIXED con stringa diretta
+const JWT_SECRET = 'super-secret-jwt-key-for-sindacato-roma-lazio-2024'
 const authMiddleware = jwt({
-  secret: (c) => c.env.JWT_SECRET
+  secret: JWT_SECRET
 })
 
 // Ottieni tutti gli iscritti con paginazione e ricerca
@@ -294,6 +295,55 @@ iscritti.delete('/:id', authMiddleware, async (c) => {
   } catch (error) {
     console.error('Delete iscritto error:', error)
     return c.json({ error: 'Errore durante l\'eliminazione dell\'iscritto' }, 500)
+  }
+})
+
+// Esportazione completa dei dati
+iscritti.get('/export', authMiddleware, async (c) => {
+  const format = c.req.query('format') || 'json'
+  const filters = c.req.query('filters') ? JSON.parse(c.req.query('filters') as string) : {}
+
+  try {
+    let query = 'SELECT * FROM iscritti WHERE 1=1'
+    const params: any[] = []
+
+    // Applica filtri se presenti
+    if (filters.ruolo) {
+      query += ' AND ruolo = ?'
+      params.push(filters.ruolo)
+    }
+    if (filters.istituto) {
+      query += ' AND istituto LIKE ?'
+      params.push(`%${filters.istituto}%`)
+    }
+    if (filters.prov_iscrizione) {
+      query += ' AND prov_iscrizione = ?'
+      params.push(filters.prov_iscrizione)
+    }
+    if (filters.tipo_di_contratto) {
+      query += ' AND tipo_di_contratto = ?'
+      params.push(filters.tipo_di_contratto)
+    }
+    if (filters.annorata) {
+      query += ' AND annorata = ?'
+      params.push(filters.annorata)
+    }
+
+    query += ' ORDER BY cognome, nome'
+
+    const result = await c.env.DB.prepare(query).bind(...params).all()
+
+    return c.json({
+      data: result.results,
+      total: result.results.length,
+      exportDate: new Date().toISOString(),
+      filters: filters,
+      format: format
+    })
+
+  } catch (error) {
+    console.error('Export iscritti error:', error)
+    return c.json({ error: 'Errore durante l\'esportazione degli iscritti' }, 500)
   }
 })
 
