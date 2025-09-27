@@ -1,6 +1,7 @@
 {
   "name": "uilscuola-roma-lazio",
   "version": "1.0.0",
+  "type": "module",
   "description": "Sistema gestione anagrafica iscritti sindacato Roma e Lazio",
   "scripts": {
     "dev": "node build.js && wrangler pages dev dist --d1=sindacato-db --local --ip 0.0.0.0 --port 3000",
